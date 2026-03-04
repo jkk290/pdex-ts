@@ -11,23 +11,24 @@ export function startREPL() {
 
     rl.prompt();
     rl.on("line", async (input) => {
-        if (!input) {
+        const words = cleanInput(input);
+        if (words.length === 0) {
             rl.prompt();
             return;
         }
-        const words = cleanInput(input);
-        const command = words[0];
-        const commandsList = getCommands();
-        if (commandsList[command]) {
+        const commandName = words[0];
+        const commands = getCommands();
+        const command = commands[commandName];
+        if (command) {
             try {
-                commandsList[command].callback(commandsList);
+                command.callback(commands);
             } catch (err) {
                 if (err instanceof Error) {
                     console.log(err.message);
                 }
             }
         } else {
-            console.log("Unknown command");
+            console.log(`Unknown command: ${commandName}`);
         }
         rl.prompt();
     });
