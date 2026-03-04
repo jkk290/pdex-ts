@@ -1,4 +1,6 @@
 import { createInterface } from "node:readline";
+import { getCommands } from "./commands.js";
+import { commandExit } from "./command_exit";
 
 export function startREPL() {
     const rl = createInterface({
@@ -14,7 +16,19 @@ export function startREPL() {
             return;
         }
         const words = cleanInput(input);
-        console.log(`Your command was: ${words[0]}`);
+        const command = words[0];
+        const commandsList = getCommands();
+        if (commandsList[command]) {
+            try {
+                commandsList[command].callback(commandsList);
+            } catch (err) {
+                if (err instanceof Error) {
+                    console.log(err.message);
+                }
+            }
+        } else {
+            console.log("Unknown command");
+        }
         rl.prompt();
     });
 }
