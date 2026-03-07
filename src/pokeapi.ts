@@ -4,17 +4,20 @@ export class PokeAPI {
     constructor() {}
 
     async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
-        const url = `${PokeAPI.baseURL}/location/${pageURL ? pageURL : ""}`;
+        let url = `${PokeAPI.baseURL}/location-area/`;
+        if (pageURL) {
+            url = pageURL;
+        }
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-            return response.json();
+            return (await response.json()) as ShallowLocations;
         } catch (err) {
-            if (err instanceof Error) {
-                console.error(err.message);
-            }
+            throw new Error(
+                `Error fetching locations: ${(err as Error).message}`,
+            );
         }
     }
 
@@ -25,11 +28,11 @@ export class PokeAPI {
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-            return response.json();
+            return (await response.json()) as Location;
         } catch (err) {
-            if (err instanceof Error) {
-                console.error(err.message);
-            }
+            throw new Error(
+                `Error fetching location: ${(err as Error).message}`,
+            );
         }
     }
 }
@@ -41,7 +44,7 @@ export type ShallowLocations = {
     results: {
         name: string;
         url: string;
-    };
+    }[];
 };
 
 export type Location = {
@@ -69,5 +72,27 @@ export type Location = {
         };
         name: string;
     }[];
-    pokemon_encounters: PokemonEncounter[];
+    pokemon_encounters: {
+        pokemon: {
+            name: string;
+            url: string;
+        };
+        version_details: {
+            encounter_details: {
+                chance: number;
+                conditon_values: any[];
+                max_level: number;
+                method: {
+                    name: string;
+                    url: string;
+                };
+                min_level: number;
+            }[];
+            max_change: number;
+            version: {
+                name: string;
+                url: string;
+            };
+        };
+    }[];
 };
