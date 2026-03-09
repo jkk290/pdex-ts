@@ -14,9 +14,13 @@ export async function startREPL() {
         }
         const commandName = words[0];
         const command = commands[commandName];
+        let args: string = "";
+        if (words.length > 1) {
+            args = words[1];
+        }
         if (command) {
             try {
-                await command.callback(state);
+                await command.callback(state, args);
             } catch (err) {
                 if (err instanceof Error) {
                     console.log(err.message);
