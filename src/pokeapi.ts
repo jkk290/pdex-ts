@@ -276,7 +276,20 @@ export type Pokemon = {
             "generation-viii": any;
         };
     };
-    stats: any[];
-    types: any[];
+    stats: {
+        base_stat: number;
+        effort: number;
+        stat: {
+            name: string;
+            url: string;
+        };
+    }[];
+    types: {
+        slot: number;
+        type: {
+            name: string;
+            url: string;
+        };
+    }[];
     weight: number;
 };
